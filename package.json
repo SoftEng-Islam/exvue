@@ -12,10 +12,16 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"body-parser": "^1.20.2",
+		"cors": "^2.8.5",
 		"express": "^4.18.2",
+		"pg": "^8.11.3",
+		"pg-hstore": "^2.3.4",
+		"sequelize": "^6.35.2",
 		"vue": "^3.3.11"
 	},
 	"devDependencies": {
+		"@types/node": "^20.10.5",
 		"@vitejs/plugin-vue": "^4.5.2",
 		"concurrently": "^8.2.2",
 		"nodemon": "^3.0.2",
@@ -24,4 +30,3 @@
 		"vue-tsc": "^1.8.25"
 	}
 }
-
