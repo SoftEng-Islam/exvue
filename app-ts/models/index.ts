@@ -1,25 +1,25 @@
-import { DB, USER, PASSWORD, HOST, dialect as _dialect, pool as _pool } from "../config/db.config.ts";
+import dbConfig from "../config/db.config.ts";
 
-import Sequelize from "sequelize";
-const sequelize = new Sequelize(DB, USER, PASSWORD, {
-	host: HOST,
-	dialect: _dialect,
-	operatorsAliases: false,
+import { Sequelize, DataTypes, Dialect } from 'sequelize';
+
+
+const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+	host: dbConfig.HOST,
+	dialect: dbConfig.dialect as Dialect,
+	// operatorsAliases: false,
 
 	pool: {
-		max: _pool.max,
-		min: _pool.min,
-		acquire: _pool.acquire,
-		idle: _pool.idle
+		max: dbConfig.pool.max,
+		min: dbConfig.pool.min,
+		acquire: dbConfig.pool.acquire,
+		idle: dbConfig.pool.idle
 	}
 });
 
-const db = {};
-
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
-
-import tutorialModel from './tutorial.model.ts';
-db.tutorials = tutorialModel;
+const db = {
+	Sequelize: Sequelize,
+	sequelize: sequelize,
+	tutorials: require("./tutorial.model.ts")(sequelize, Sequelize)
+};
 
 export default db;

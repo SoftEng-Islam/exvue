@@ -1,15 +1,15 @@
-// import { createRequire } from 'module';
-// const require = createRequire(import.meta.url);
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 
 import express, {Express, Request, Response} from "express";
 
 const app: Express = express();
 
 // set port, listen for requests
-const PORT = process.env.PORT || 8080;
+const PORT: string | 8080 = process.env.PORT || 8080;
 
 import bodyParser from "body-parser";
-const cors = require("cors");
+import cors from "cors";
 
 
 
@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-import {db} from "./models/index";
+import db from "./models/index.ts";
 db.sequelize.sync({ force: true }).then(() => {
 	console.log("Drop and re-sync db.");
 });
