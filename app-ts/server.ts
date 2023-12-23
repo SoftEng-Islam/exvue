@@ -1,10 +1,15 @@
 // import { createRequire } from 'module';
 // const require = createRequire(import.meta.url);
 
-import express from "express";
+import express, {Express, Request, Response} from "express";
+
+const app: Express = express();
+
+// set port, listen for requests
+const PORT = process.env.PORT || 8080;
+
 import bodyParser from "body-parser";
 const cors = require("cors");
-const app = express();
 
 
 
@@ -21,21 +26,20 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-import {db} from "../app/models/index";
+import {db} from "./models/index";
 db.sequelize.sync({ force: true }).then(() => {
 	console.log("Drop and re-sync db.");
 });
 
 
 // simple route
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
 	res.json({ message: "Welcome to my application." });
 });
 
 
 
-// set port, listen for requests
-const PORT = process.env.PORT || 8080;
+
 app.listen(PORT, () => {
 	console.log(`http://localhost:${PORT}`);
 });
