@@ -1,18 +1,8 @@
-// import express from "express";
-// const port = process.env.PORT || 3000;
-// const app = express();
-// app.get("/api/v1/hello", (_req, res) => {
-// 	res.json({ message: "Hello, Islam!" });
-// });
-// app.listen(port, () => {
-// 	console.log("Server listening on port", port);
-// });
+// import { createRequire } from 'module';
+// const require = createRequire(import.meta.url);
 
-
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
 import express from "express";
-const bodyParser = require("body-parser");
+import bodyParser from "body-parser";
 const cors = require("cors");
 const app = express();
 
@@ -31,8 +21,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-
-const db = require("./app/models");
+import {db} from "../app/models/index";
 db.sequelize.sync({ force: true }).then(() => {
 	console.log("Drop and re-sync db.");
 });

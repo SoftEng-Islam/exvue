@@ -3,7 +3,7 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
-	"main": "server/index.js",
+	"main": "server/server.js",
 	"scripts": {
 		"dev:frontend": "vite",
 		"dev:backend": "nodemon server/index.js",
