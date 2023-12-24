@@ -16,10 +16,11 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
 	}
 });
 
+import tutorial from "./tutorial.model.ts";
 const db = {
 	Sequelize: Sequelize,
 	sequelize: sequelize,
-	tutorials: require("./tutorial.model.ts")(sequelize, Sequelize)
+	tutorials: tutorial(sequelize, Sequelize)
 };
 
 export default db;

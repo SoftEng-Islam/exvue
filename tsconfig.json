@@ -1,5 +1,4 @@
 {
-	"extends": "tsconfig/base.json",
 	"compilerOptions": {
 		"esModuleInterop": true,
 		"target": "ES2020",
