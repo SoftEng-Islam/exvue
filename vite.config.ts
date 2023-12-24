@@ -5,10 +5,11 @@ import pkg from "./package.json";
 import { URL } from "node:url";
 import vuePugPlugin from "vue-pug-plugin";
 import viteTsconfigPaths from 'vite-tsconfig-paths';
+import { VitePluginNode } from "vite-plugin-node";
 
 
 export default defineConfig(({ command }) => {
-	rmSync("dist-electron", { recursive: true, force: true });
+	rmSync("dist", { recursive: true, force: true });
 	const isServe = command === "serve";
 	const isBuild = command === "build";
 	const sourcemap = isServe || !!process.env.VSCODE_DEBUG;
@@ -21,7 +22,14 @@ export default defineConfig(({ command }) => {
 					},
 				},
 			}),
-			viteTsconfigPaths()
+			viteTsconfigPaths(),
+			...VitePluginNode({
+				adapter: "express",
+				appPath: "./src/app.ts",
+				exportName: "viteNodeApp",
+				tsCompiler: "esbuild",
+				swcOptions: {},
+			}),
 		],
 		server:
 		process.env.VSCODE_DEBUG &&
