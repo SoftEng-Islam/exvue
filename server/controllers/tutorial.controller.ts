@@ -1,41 +1,133 @@
-// import { createRequire } from 'module';
-// const require = createRequire(import.meta.url);
+import { Request, Response } from "express";
+import Tutorial from "../models/tutorial.model";
+import tutorialRepository from "../repositories/tutorial.repository";
 
-import { tutorials, Sequelize } from "../models";
-const Tutorial = tutorials;
-const Op = Sequelize.Op;
+export default class TutorialController {
+	async create(req: Request, res: Response) {
+		if (!req.body.title) {
+			res.status(400).send({
+				message: "Content can not be empty!",
+			});
+			return;
+		}
 
-// Create and Save a new Tutorial
-export function create(req, res) {
+		try {
+			const tutorial: Tutorial = req.body;
+			if (!tutorial.published) tutorial.published = false;
 
-}
+			const savedTutorial = await tutorialRepository.save(tutorial);
 
-// Retrieve all Tutorials from the database.
-export function findAll(req, res) {
+			res.status(201).send(savedTutorial);
+		} catch (err) {
+			res.status(500).send({
+				message: "Some error occurred while retrieving tutorials.",
+			});
+		}
+	}
 
-}
+	async findAll(req: Request, res: Response) {
+		const title =
+			typeof req.query.title === "string" ? req.query.title : "";
 
-// Find a single Tutorial with an id
-export function findOne(req, res) {
+		try {
+			const tutorials = await tutorialRepository.retrieveAll({ title });
 
-}
+			res.status(200).send(tutorials);
+		} catch (err) {
+			res.status(500).send({
+				message: "Some error occurred while retrieving tutorials.",
+			});
+		}
+	}
 
-// Update a Tutorial by the id in the request
-export function update(req, res) {
+	async findOne(req: Request, res: Response) {
+		const id: number = parseInt(req.params.id);
 
-}
+		try {
+			const tutorial = await tutorialRepository.retrieveById(id);
 
-// Delete a Tutorial with the specified id in the request
-const _delete = (req, res) => {
-};
-export { _delete as delete };
+			if (tutorial) res.status(200).send(tutorial);
+			else
+				res.status(404).send({
+					message: `Cannot find Tutorial with id=${id}.`,
+				});
+		} catch (err) {
+			res.status(500).send({
+				message: `Error retrieving Tutorial with id=${id}.`,
+			});
+		}
+	}
 
-// Delete all Tutorials from the database.
-export function deleteAll(req, res) {
+	async update(req: Request, res: Response) {
+		let tutorial: Tutorial = req.body;
+		tutorial.id = parseInt(req.params.id);
 
-}
+		try {
+			const num = await tutorialRepository.update(tutorial);
 
-// Find all published Tutorials
-export function findAllPublished(req, res) {
+			if (num == 1) {
+				res.send({
+					message: "Tutorial was updated successfully.",
+				});
+			} else {
+				res.send({
+					message: `Cannot update Tutorial with id=${tutorial.id}. Maybe Tutorial was not found or req.body is empty!`,
+				});
+			}
+		} catch (err) {
+			res.status(500).send({
+				message: `Error updating Tutorial with id=${tutorial.id}.`,
+			});
+		}
+	}
 
+	async delete(req: Request, res: Response) {
+		const id: number = parseInt(req.params.id);
+
+		try {
+			const num = await tutorialRepository.delete(id);
+
+			if (num == 1) {
+				res.send({
+					message: "Tutorial was deleted successfully!",
+				});
+			} else {
+				res.send({
+					message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`,
+				});
+			}
+		} catch (err) {
+			res.status(500).send({
+				message: `Could not delete Tutorial with id==${id}.`,
+			});
+		}
+	}
+
+	async deleteAll(req: Request, res: Response) {
+		try {
+			const num = await tutorialRepository.deleteAll();
+
+			res.send({
+				message: `${num} Tutorials were deleted successfully!`,
+			});
+		} catch (err) {
+			res.status(500).send({
+				message: "Some error occurred while removing all tutorials.",
+			});
+		}
+	}
+
+	async findAllPublished(req: Request, res: Response) {
+		try {
+			const tutorials = await tutorialRepository.retrieveAll({
+				published: true,
+			});
+
+			res.status(200).send(tutorials);
+		} catch (err) {
+			res.status(500).send({
+				message: "Some error occurred while retrieving tutorials.",
+			});
+		}
+	}
 }
