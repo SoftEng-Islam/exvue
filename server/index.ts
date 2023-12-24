@@ -1,5 +1,5 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+// import { createRequire } from 'module';
+// const require = createRequire(import.meta.url);
 
 import express, {Express, Request, Response} from "express";
 
@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-import db from "./models/index.ts";
+import db from "./models/index.js";
 db.sequelize.sync({ force: true }).then(() => {
 	console.log("Drop and re-sync db.");
 });
