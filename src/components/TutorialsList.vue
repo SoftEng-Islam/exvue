@@ -1,95 +1,127 @@
 <template>
-	<div class="list row">
-		<div class="col-md-6">
-			<h4>Tutorials List</h4>
-			<ul class="list-group">
-				<li class="list-group-item" :class="{ active: index == currentIndex }"
-					v-for="(tutorial, index) in tutorials" :key="index" @click="setActiveTutorial(tutorial, index)">
-					{{ tutorial.title }}
-				</li>
-			</ul>
+  <div class="list row">
+    <div class="col-md-8">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Search by title"
+          v-model="title"/>
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button"
+            @click="searchTitle"
+          >
+            Search
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <h4>Tutorials List</h4>
+      <ul class="list-group">
+        <li class="list-group-item"
+          :class="{ active: index == currentIndex }"
+          v-for="(tutorial, index) in tutorials"
+          :key="index"
+          @click="setActiveTutorial(tutorial, index)"
+        >
+          {{ tutorial.title }}
+        </li>
+      </ul>
 
-			<button class="m-3 btn btn-sm btn-danger" @click="removeAllTutorials">
-				Remove All
-			</button>
-		</div>
-		<div class="col-md-6">
-			<div v-if="currentTutorial">
-				<tutorial-details :tutorial="currentTutorial" @refreshList="refreshList" />
-			</div>
-			<div v-else>
-				<br />
-				<p>Please click on a Tutorial...</p>
-			</div>
-		</div>
-	</div>
+      <button class="m-3 btn btn-sm btn-danger" @click="removeAllTutorials">
+        Remove All
+      </button>
+    </div>
+    <div class="col-md-6">
+      <div v-if="currentTutorial">
+        <h4>Tutorial</h4>
+        <div>
+          <label><strong>Title:</strong></label> {{ currentTutorial.title }}
+        </div>
+        <div>
+          <label><strong>Description:</strong></label> {{ currentTutorial.description }}
+        </div>
+        <div>
+          <label><strong>Status:</strong></label> {{ currentTutorial.published ? "Published" : "Pending" }}
+        </div>
+
+        <router-link :to="'/tutorials/' + currentTutorial.id" class="badge badge-warning">Edit</router-link>
+      </div>
+      <div v-else>
+        <br />
+        <p>Please click on a Tutorial...</p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import TutorialDataService from "../services/TutorialDataService";
-import TutorialDetails from "./Tutorial";
 
 export default {
-	name: "tutorials-list",
-	components: { TutorialDetails },
-	data() {
-		return {
-			tutorials: [],
-			currentTutorial: null,
-			currentIndex: -1
-		};
-	},
-	methods: {
-		onDataChange(items) {
-			let _tutorials = [];
+  name: "tutorials-list",
+  data() {
+    return {
+      tutorials: [],
+      currentTutorial: null,
+      currentIndex: -1,
+      title: ""
+    };
+  },
+  methods: {
+    retrieveTutorials() {
+      TutorialDataService.getAll()
+        .then(response => {
+          this.tutorials = response.data;
+          console.log(response.data);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
 
-			items.forEach((item) => {
-				let key = item.key;
-				let data = item.val();
-				_tutorials.push({
-					key: key,
-					title: data.title,
-					description: data.description,
-					published: data.published,
-				});
-			});
+    refreshList() {
+      this.retrieveTutorials();
+      this.currentTutorial = null;
+      this.currentIndex = -1;
+    },
 
-			this.tutorials = _tutorials;
-		},
+    setActiveTutorial(tutorial, index) {
+      this.currentTutorial = tutorial;
+      this.currentIndex = tutorial ? index : -1;
+    },
 
-		refreshList() {
-			this.currentTutorial = null;
-			this.currentIndex = -1;
-		},
-
-		setActiveTutorial(tutorial, index) {
-			this.currentTutorial = tutorial;
-			this.currentIndex = index;
-		},
-
-		removeAllTutorials() {
-			TutorialDataService.deleteAll()
-				.then(() => {
-					this.refreshList();
-				})
-				.catch((e) => {
-					console.log(e);
-				});
-		},
-	},
-	mounted() {
-		TutorialDataService.getAll().on("value", this.onDataChange);
-	},
-	beforeUnmount() {
-		TutorialDataService.getAll().off("value", this.onDataChange);
-	}
+    removeAllTutorials() {
+      TutorialDataService.deleteAll()
+        .then(response => {
+          console.log(response.data);
+          this.refreshList();
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    },
+    
+    searchTitle() {
+      TutorialDataService.findByTitle(this.title)
+        .then(response => {
+          this.tutorials = response.data;
+          this.setActiveTutorial(null);
+          console.log(response.data);
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    }
+  },
+  mounted() {
+    this.retrieveTutorials();
+  }
 };
 </script>
 
 <style>
 .list {
-	text-align: left;
-	max-width: 750px;
-	margin: auto;
+  text-align: left;
+  max-width: 750px;
+  margin: auto;
 }
 </style>
