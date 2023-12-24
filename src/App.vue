@@ -2,6 +2,24 @@
 // import HelloWorld from './components/HelloWorld.vue'
 </script>
 
-<template lang="pug">
-button(class="inline-block cursor-pointer rounded-md bg-gray-800 px-4 py-3 text-center text-sm font-semibold uppercase text-white transition duration-200 ease-in-out hover:bg-gray-900") Button
+<template>
+	<template>
+		<div id="app">
+			<nav class="navbar navbar-expand navbar-dark bg-dark">
+				<router-link to="/" class="navbar-brand">bezKoder</router-link>
+				<div class="navbar-nav mr-auto">
+					<li class="nav-item">
+						<router-link to="/tutorials" class="nav-link">Tutorials</router-link>
+					</li>
+					<li class="nav-item">
+						<router-link to="/add" class="nav-link">Add</router-link>
+					</li>
+				</div>
+			</nav>
+
+			<div class="container mt-3">
+				<router-view />
+			</div>
+		</div>
+	</template>
 </template>

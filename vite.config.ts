@@ -23,7 +23,7 @@ export default defineConfig(({ command }) => {
 			}),
 		],
 		server: {
-			port: 1420,
+			port: 8081,
 			strictPort: true,
 		}
 	}
