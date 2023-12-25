@@ -4,6 +4,7 @@ import vuePugPlugin from "vue-pug-plugin";
 import { VitePluginNode } from "vite-plugin-node";
 
 export default defineConfig({
+	base: './',
 	server: {
 		// vite server configs, for details see [vite doc](https://vitejs.dev/config/#server-host)
 		port: 3000,
@@ -22,7 +23,7 @@ export default defineConfig({
 			// you can also pass a function if you are using other frameworks, see Custom Adapter section
 			adapter: "express",
 			// tell the plugin where is your project entry
-			appPath: "./server/server.ts",
+			appPath: "./server/index.ts",
 
 			// Optional, default: 'viteNodeApp'
 			// the name of named export of you app from the appPath file
